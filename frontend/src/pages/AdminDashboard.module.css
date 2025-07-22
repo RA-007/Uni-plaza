@@ -1,0 +1,124 @@
+.dashboardContainer {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #2d3a4a;
+}
+.analyticsSection {
+  background: #f5f7fa;
+  padding: 18px 24px;
+  border-radius: 10px;
+  margin-bottom: 32px;
+}
+.analyticsList {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.1rem;
+}
+.formSection {
+  margin-bottom: 32px;
+}
+.adForm {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.input, .select {
+  padding: 8px 12px;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.input:focus, .select:focus {
+  border: 1.5px solid #1976d2;
+}
+.addButton {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.addButton:hover {
+  background: #125ea2;
+}
+.adsSection {
+  margin-top: 24px;
+}
+.adsTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f9fafb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.adsTable th, .adsTable td {
+  padding: 12px 10px;
+  text-align: left;
+}
+.adsTable th {
+  background: #e3eaf2;
+  font-weight: 600;
+}
+.adsTable tr:nth-child(even) {
+  background: #f5f7fa;
+}
+.approveButton {
+  background: #43a047;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  margin-right: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.approveButton:hover {
+  background: #357a38;
+}
+.denyButton {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  margin-right: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.denyButton:hover {
+  background: #ab2321;
+}
+.deleteButton {
+  background: #757575;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.deleteButton:hover {
+  background: #424242;
+} 
