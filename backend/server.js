@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB Atlas (replace with your URI)
-const mongoURI = 'mongodb+srv://naganarthanan152002:Naga2002%23mongo@thanos.kerhgqd.mongodb.net/mernDB?retryWrites=true&w=majority&appName=Thanos';
+const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI)
   .then(() => {
