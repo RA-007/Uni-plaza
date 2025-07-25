@@ -1,21 +1,33 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
 const app = express();
-app.use(cors());
+
+// Load environment variables
+const MONGOURI = process.env.MONGO_URI;
+const PORT = process.env.PORT || 5000;
+
+// Import routes for Clubs
+const productAdRoutes = require('./routes/clubs/productAd.route');
+const eventAdRoutes = require('./routes/clubs/eventAd.route');
+const otherAdRoutes = require('./routes/clubs/otherAd.route');
+// End Import routes for Clubs
+
+
+// Middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(cors({origin: '*'}));
 app.use(express.json());
 
-// Connect to MongoDB Atlas (replace with your URI)
-const mongoURI = 'mongodb+srv://naganarthanan152002:Naga2002%23mongo@thanos.kerhgqd.mongodb.net/mernDB?retryWrites=true&w=majority&appName=Thanos';
 
-mongoose.connect(mongoURI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB Atlas');
-    app.listen(5000, () => console.log('🚀 Server running on http://localhost:5000'));
-  })
-  .catch((err) => console.error('❌ MongoDB connection failed:', err));
+// Routes For Clubs
+app.use('/api/club/product-ads', productAdRoutes);
+app.use('/api/club/event-ads', eventAdRoutes);
+app.use('/api/club/other-ads', otherAdRoutes);
 
+
+// Use separate file for store models.
 // Mongoose Ad model
 const adSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -25,6 +37,7 @@ const adSchema = new mongoose.Schema({
 });
 const Ad = mongoose.model('Ad', adSchema);
 
+// Use separete file for store routes.
 // POST /api/ads route
 app.post('/api/ads', async (req, res) => {
   try {
@@ -37,7 +50,22 @@ app.post('/api/ads', async (req, res) => {
   }
 });
 
-// Simple test route
-app.get('/', (req, res) => {
-  res.send('API Running');
+// GET /api/ads route
+app.get("/", (req, res) => {
+  res.send("Welcome to Uni-Plaza API");
 });
+
+mongoose
+  .connect(
+    MONGOURI
+  )
+  .then(() => {
+    console.log("Connected to database!");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("Connection failed!", err);
+  });
+
