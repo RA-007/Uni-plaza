@@ -1,0 +1,151 @@
+####### Clubs Product Ads API end Points check
+GET http://localhost:3000/api/club/product-ads
+Content-Type: application/json
+
+#####
+POST http://localhost:3000/api/club/product-ads
+Content-Type: application/json
+
+{
+  "prodAdName": "Sample Product",
+  "prodAdDescription": "This is a sample product description.",
+  "university": "Sample University",
+  "prodAdPrice": 99.99,
+  "contactNumber": ["1234567890", "0987654321"],
+  "prodAdImage": ["image1.jpg", "image2.jpg"],
+  "prodAdTags": ["electronics", "sale"],
+  "prodAdRelatedLinks": ["https://example.com/product"],
+  "prodAdStatus": "active"
+}
+
+######
+GET http://localhost:3000/api/club/product-ads/68831d86100a3293e887567f
+Content-Type: application/json
+
+######
+PUT http://localhost:3000/api/club/product-ads/68831d86100a3293e887567f
+Content-Type: application/json
+
+{
+  "prodAdName": "Updated Product",
+  "prodAdDescription": "This is an updated product description.",
+  "university": "Updated University",
+  "prodAdPrice": 89.99,
+  "contactNumber": ["1234567890"],
+  "prodAdImage": ["updated_image1.jpg"],
+  "prodAdTags": ["electronics", "discount"],
+  "prodAdRelatedLinks": ["https://example.com/updated-product"],
+  "prodAdStatus": "active"
+}
+######
+DELETE http://localhost:3000/api/club/product-ads/68831d86100a3293e887567f
+Content-Type: application/json
+
+
+######
+GET http://localhost:3000/api/club/event-ads
+Content-Type: application/json
+
+
+
+
+
+##########################################################################################################
+####### Clubs Events Ads API end Points check
+
+GET http://localhost:3000/api/club/event-ads
+Content-Type: application/json
+
+#####
+POST http://localhost:3000/api/club/event-ads
+Content-Type: application/json
+
+{
+  "evntAdTitle": "Sample Event",
+  "evntAdDate": "2024-07-01T18:00:00.000Z",
+  "evntAdTime": "18:00",
+  "evntAdDescription": "This is a sample event description.",
+  "university": "Sample University",
+  "evntAdLocation": "Main Hall, Campus",
+  "contactNumber": ["1234567890", "0987654321"],
+  "evntAdImage": ["event1.jpg", "event2.jpg"],
+  "evntAdTags": ["workshop", "tech"],
+  "evntAdRelatedLinks": ["https://example.com/event"],
+  "evntAdStatus": "active"
+}
+
+######
+GET http://localhost:3000/api/club/event-ads/68833906fe9b90e4f9b80bd1
+Content-Type: application/json
+
+######
+PUT http://localhost:3000/api/club/event-ads/68833906fe9b90e4f9b80bd1
+Content-Type: application/json
+
+{
+  "evntAdTitle": "Updated Event",
+  "evntAdDate": "2024-08-15T19:30:00.000Z",
+  "evntAdTime": "19:30",
+  "evntAdDescription": "This is an updated event description.",
+  "university": "Updated University",
+  "evntAdLocation": "Auditorium, Main Campus",
+  "contactNumber": ["1122334455"],
+  "evntAdImage": ["updated_event1.jpg"],
+  "evntAdTags": ["seminar", "education"],
+  "evntAdRelatedLinks": ["https://example.com/updated-event"],
+  "evntAdStatus": "active"
+}
+######
+DELETE http://localhost:3000/api/club/event-ads/68831d86100a3293e887567f
+Content-Type: application/json
+
+
+
+
+
+##########################################################################################################
+####### Clubs Other Ads API end Points check
+
+GET http://localhost:3000/api/club/other-ads
+Content-Type: application/json
+
+#####
+POST http://localhost:3000/api/club/other-ads
+Content-Type: application/json
+
+{
+  "otherAdTitle": "Sample Other Ad",
+  "otherAdDate": "2024-07-10T15:00:00.000Z",
+  "otherAdDescription": "This is a sample other ad description.",
+  "university": "Sample University",
+  "contactNumber": ["1234567890", "0987654321"],
+  "otherAdLocation": "Library, Campus",
+  "otherAdImage": ["other1.jpg", "other2.jpg"],
+  "otherAdTags": ["announcement", "general"],
+  "otherAdRelatedLinks": ["https://example.com/other-ad"],
+  "otherAdStatus": "active"
+}
+
+######
+GET http://localhost:3000/api/club/other-ads/6883380549ae0e5ebb837673
+Content-Type: application/json
+
+######
+PUT http://localhost:3000/api/club/other-ads/6883380549ae0e5ebb837673
+Content-Type: application/json
+
+{
+  "otherAdTitle": "Updated Other Ad",
+  "otherAdDate": "2024-08-20T16:30:00.000Z",
+  "otherAdDescription": "This is an updated other ad description.",
+  "university": "Updated University",
+  "contactNumber": ["5566778899"],
+  "otherAdLocation": "Updated Library, Main Campus",
+  "otherAdImage": ["updated_other1.jpg"],
+  "otherAdTags": ["announcement", "update"],
+  "otherAdRelatedLinks": ["https://example.com/updated-other-ad"],
+  "otherAdStatus": "active"
+}
+######
+DELETE http://localhost:3000/api/club/other-ads/68831d86100a3293e887567f
+Content-Type: application/json
