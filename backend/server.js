@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 // Load environment variables
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 const productAdRoutes = require('./routes/clubs/productAd.route');
 const eventAdRoutes = require('./routes/clubs/eventAd.route');
 const otherAdRoutes = require('./routes/clubs/otherAd.route');
+const uploadRoutes = require('./routes/upload');
 // End Import routes for Clubs
 
 
@@ -20,11 +22,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({origin: '*'}));
 app.use(express.json());
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes For Clubs
 app.use('/api/club/product-ads', productAdRoutes);
 app.use('/api/club/event-ads', eventAdRoutes);
 app.use('/api/club/other-ads', otherAdRoutes);
+
+// Upload route
+app.use('/api/upload', uploadRoutes);
 
 
 // Use separate file for store models.
@@ -67,5 +74,9 @@ mongoose
   })
   .catch((err) => {
     console.log("Connection failed!", err);
+    console.log("Starting server anyway for file upload testing...");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT} (without database)`);
+    });
   });
 
