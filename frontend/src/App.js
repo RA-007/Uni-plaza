@@ -5,6 +5,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 import ClubDashboard from './pages/clubs/ClubDashboard';
 
+// ✅ NEW: Import auth pages
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import EnterOtp from './pages/EnterOtp';
+import ForgotPassword from './pages/ForgotPassword';
+
 function Navigation() {
   const location = useLocation();
   
@@ -49,10 +55,17 @@ function App() {
       <Router>
         <Navigation />
         <Routes>
+          {/* Existing Routes */}
           <Route path="/" element={<AdminDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/clubs" element={<ClubDashboard />} />
+
+          {/* ✅ NEW Auth Routes */}
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/otp" element={<EnterOtp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </Router>
     </div>

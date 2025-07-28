@@ -9,21 +9,25 @@ const app = express();
 const MONGOURI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 5000;
 
+// ✅ NEW: Import auth route
+const authRoutes = require('./routes/auth');
+
 // Import routes for Clubs
 const productAdRoutes = require('./routes/clubs/productAd.route');
 const eventAdRoutes = require('./routes/clubs/eventAd.route');
 const otherAdRoutes = require('./routes/clubs/otherAd.route');
 const uploadRoutes = require('./routes/upload');
-// End Import routes for Clubs
-
 
 // Middleware
 app.use(express.urlencoded({ extended: false }));
-app.use(cors({origin: '*'}));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// ✅ NEW: Auth route
+app.use('/api/auth', authRoutes);
 
 // Routes For Clubs
 app.use('/api/club/product-ads', productAdRoutes);
@@ -32,7 +36,6 @@ app.use('/api/club/other-ads', otherAdRoutes);
 
 // Upload route
 app.use('/api/upload', uploadRoutes);
-
 
 // Use separate file for store models.
 // Mongoose Ad model
@@ -44,7 +47,6 @@ const adSchema = new mongoose.Schema({
 });
 const Ad = mongoose.model('Ad', adSchema);
 
-// Use separete file for store routes.
 // POST /api/ads route
 app.post('/api/ads', async (req, res) => {
   try {
@@ -63,9 +65,7 @@ app.get("/", (req, res) => {
 });
 
 mongoose
-  .connect(
-    MONGOURI
-  )
+  .connect(MONGOURI)
   .then(() => {
     console.log("Connected to database!");
     app.listen(PORT, () => {
@@ -79,4 +79,3 @@ mongoose
       console.log(`Server is running on port ${PORT} (without database)`);
     });
   });
-
