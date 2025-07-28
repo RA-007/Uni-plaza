@@ -11,6 +11,9 @@ import Login from './pages/Login';
 import EnterOtp from './pages/EnterOtp';
 import ForgotPassword from './pages/ForgotPassword';
 
+import Profile from './pages/Profile';
+
+
 function Navigation() {
   const location = useLocation();
   
@@ -66,6 +69,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/otp" element={<EnterOtp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/profile" element={<Profile />} />
+
         </Routes>
       </Router>
     </div>

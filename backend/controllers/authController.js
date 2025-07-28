@@ -6,9 +6,14 @@ const sendOtp = require('../utils/sendOtp');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.signup = async (req, res) => {
+  console.log('Request body:', req.body);
   const { name, email, password, specialization } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  if (!name || !email || !password || !specialization) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
 
   try {
     const user = new User({
@@ -85,4 +90,19 @@ exports.resetPassword = async (req, res) => {
   await user.save();
 
   res.json({ message: 'Password reset successful' });
+};
+
+exports.getProfile = async (req, res) => {
+  res.json(req.user); // req.user is set by middleware
+};
+
+exports.updateProfile = async (req, res) => {
+  const user = req.user;
+  const { name, specialization } = req.body;
+
+  if (name) user.name = name;
+  if (specialization) user.specialization = specialization;
+
+  await user.save();
+  res.json({ message: 'Profile updated', user });
 };
