@@ -21,6 +21,8 @@ const adminRoutes = require('./routes/admin');
 // ✅ Import Ad model here (after defining in models/Ad.js)
 const Ad = require('./models/Ad');
 
+
+
 // Middleware
 app.use(cors({ origin: '*' }));
 app.use(express.json());
