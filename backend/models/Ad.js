@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const adSchema = new mongoose.Schema({
   title: String,
   description: String,
-  type: { type: String, enum: ['event', 'product', 'other'] },
-  status: { type: String, enum: ['pending', 'approved', 'denied'], default: 'pending' },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: Date, default: Date.now },
-});
+  type: String,
+  status: { type: String, default: 'pending' },
+  createdBy: mongoose.Schema.Types.ObjectId,
+}, { timestamps: true });
 
-module.exports = mongoose.model('Ad', adSchema); 
+module.exports = mongoose.models.Ad || mongoose.model('Ad', adSchema);

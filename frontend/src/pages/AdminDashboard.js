@@ -8,50 +8,75 @@ export default function AdminDashboard() {
   const [form, setForm] = useState({ title: "", description: "", type: "event" });
 
   const token = localStorage.getItem("token");
+  const API = "http://localhost:3000"; // ✅ Ensure this matches your backend PORT
 
-  // Fetch ads and analytics
   useEffect(() => {
     fetchAds();
     fetchAnalytics();
   }, []);
 
   const fetchAds = async () => {
-    const res = await axios.get("http://localhost:5000/api/admin/ads", {
-      headers: { Authorization: `Bearer ${token}` }
-    }).catch(() => setAds([]));
-    if (res) setAds(res.data);
+    try {
+      const res = await axios.get(`${API}/api/admin/ads`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAds(res.data);
+    } catch (error) {
+      console.error("Failed to fetch ads", error);
+      setAds([]);
+    }
   };
 
   const fetchAnalytics = async () => {
-    const res = await axios.get("http://localhost:5000/api/admin/analytics", {
-      headers: { Authorization: `Bearer ${token}` }
-    }).catch(() => setAnalytics({}));
-    if (res) setAnalytics(res.data);
+    try {
+      const res = await axios.get(`${API}/api/admin/analytics`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAnalytics(res.data);
+    } catch (error) {
+      console.error("Failed to fetch analytics", error);
+      setAnalytics({});
+    }
   };
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const handleAddAd = async e => {
+  const handleAddAd = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:5000/api/admin/ads", form, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setForm({ title: "", description: "", type: "event" });
-    fetchAds();
+    try {
+      await axios.post(`${API}/api/admin/ads`, form, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setForm({ title: "", description: "", type: "event" });
+      fetchAds();
+    } catch (error) {
+      console.error("Error adding ad:", error.response?.data || error.message);
+      alert("Error adding ad: " + (error.response?.data?.error || error.message));
+    }
   };
 
   const handleStatus = async (id, status) => {
-    await axios.patch(`http://localhost:5000/api/admin/ads/${id}/status`, { status }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    fetchAds();
+    try {
+      await axios.patch(`${API}/api/admin/ads/${id}/status`, { status }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchAds();
+    } catch (error) {
+      console.error("Error updating status", error);
+    }
   };
 
-  const handleDelete = async id => {
-    await axios.delete(`http://localhost:5000/api/admin/ads/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    fetchAds();
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API}/api/admin/ads/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchAds();
+    } catch (error) {
+      console.error("Error deleting ad", error);
+    }
   };
 
   return (
@@ -110,4 +135,4 @@ export default function AdminDashboard() {
       </div>
     </div>
   );
-} 
+}
