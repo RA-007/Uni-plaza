@@ -4,7 +4,12 @@ const adSchema = new mongoose.Schema({
   title: String,
   description: String,
   type: String,
-  status: { type: String, default: 'pending' },
+  status: {
+  type: String,
+  enum: ['pending', 'active', 'rejected'],
+  default: 'pending'
+},
+
   createdBy: mongoose.Schema.Types.ObjectId,
 }, { timestamps: true });
 

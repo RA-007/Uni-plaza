@@ -72,6 +72,24 @@ export default function Signup() {
         </select>
         <button type="submit">Sign Up</button>
       </form>
+      <div style={{ textAlign: 'center', marginTop: '16px' }}>
+        <span>Already registered? </span>
+        <button
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#388e3c',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            padding: 0,
+          }}
+          type="button"
+          onClick={() => window.location.href = '/login'}
+        >
+          Login
+        </button>
+      </div>
     </>
   );
 }
