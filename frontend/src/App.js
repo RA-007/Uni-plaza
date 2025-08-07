@@ -2,7 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
 import AdminDashboard from './pages/AdminDashboard';
-import StudentDashboard from './pages/StudentDashboard';
+import StudentDashboard from './pages/students/components/StudentDashboard';
+
+import SingleAd from './pages/students/components/SingleAd';
+import SavedAds from './pages/students/components/SavedAds';
+import LikedAds from './pages/students/LikedAds';
+import InterestedAds from './pages/students/InterestedAds';
+
 import ClubDashboard from './pages/clubs/ClubDashboard';
 
 // ✅ NEW: Import auth pages
@@ -62,7 +68,14 @@ function App() {
           <Route path="/" element={<AdminDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/ad/:adType/:adId" element={<SingleAd />} />
           <Route path="/clubs" element={<ClubDashboard />} />
+
+
+          <Route path="/saved-ads" element={<SavedAds />} />
+          <Route path="/liked-ads" element={<LikedAds />} />
+          <Route path="/interested-ads" element={<InterestedAds />} />
 
           {/* ✅ NEW Auth Routes */}
           <Route path="/signup" element={<Signup />} />

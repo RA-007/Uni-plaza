@@ -25,7 +25,7 @@ const adminRoutes = require('./routes/admin');
 // ✅ Import Ad model here (after defining in models/Ad.js)
 const Ad = require('./models/Ad');
 
-
+const studentAdRoutes = require('./routes/students/studentAd.route');
 
 // Middleware
 app.use(cors({ origin: '*' }));
@@ -46,10 +46,23 @@ app.use('/api/club/other-ads', otherAdRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 
+//students
+app.use('/api/student/ads', studentAdRoutes);
+
 // Test API route
 app.get('/', (req, res) => {
   res.send('Welcome to Uni-Plaza API');
 });
+
+// Use separate file for store models.
+// Mongoose Ad model
+const adSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: String,
+  price: Number,
+  createdAt: { type: Date, default: Date.now }
+});
+// const Ad = mongoose.model('Ad', adSchema);
 
 // POST /api/ads
 app.post('/api/ads', async (req, res) => {
@@ -62,6 +75,28 @@ app.post('/api/ads', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// GET /api/ads route
+app.get("/", (req, res) => {
+  res.send("Welcome to Uni-Plaza API");
+});
+
+mongoose
+  .connect(MONGOURI)
+  .then(() => {
+    console.log("Connected to database!");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("Connection failed!", err);
+    console.log("Starting server anyway for file upload testing...");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT} (without database)`);
+    });
+  });
+
 
 // Passport serialization
 passport.serializeUser((user, done) => done(null, user));
@@ -106,18 +141,18 @@ app.get('/api/auth/facebook/callback',
   }
 );
 
-// Connect to DB and start server
-mongoose
-  .connect(MONGOURI)
-  .then(() => {
-    console.log('Connected to database!');
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Database connection failed:', err);
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT} (without DB)`);
-    });
-  });
+// // Connect to DB and start server
+// mongoose
+//   .connect(MONGOURI)
+//   .then(() => {
+//     console.log('Connected to database!');
+//     app.listen(PORT, () => {
+//       console.log(`Server is running on port ${PORT}`);
+//     });
+//   })
+//   .catch((err) => {
+//     console.error('Database connection failed:', err);
+//     app.listen(PORT, () => {
+//       console.log(`Server is running on port ${PORT} (without DB)`);
+//     });
+//   });
