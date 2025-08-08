@@ -21,6 +21,7 @@ const eventAdRoutes = require('./routes/clubs/eventAd.route');
 const otherAdRoutes = require('./routes/clubs/otherAd.route');
 const uploadRoutes = require('./routes/upload');
 const adminRoutes = require('./routes/admin');
+const homeRoutes = require('./routes/home');
 
 // ✅ Import Ad model here (after defining in models/Ad.js)
 const Ad = require('./models/Ad');
@@ -45,6 +46,7 @@ app.use('/api/club/event-ads', eventAdRoutes);
 app.use('/api/club/other-ads', otherAdRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/home', homeRoutes);
 
 //students
 app.use('/api/student/ads', studentAdRoutes);

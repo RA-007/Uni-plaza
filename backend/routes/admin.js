@@ -19,6 +19,17 @@ router.get('/ads', auth, role(['admin']), async (req, res) => {
   }
 });
 
+// Get admin ads for students (public access)
+router.get('/ads/public', async (req, res) => {
+  try {
+    const ads = await Ad.find({ status: 'approved' }).sort({ createdAt: -1 });
+    res.json(ads);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch admin ads' });
+  }
+});
+
 // Add Ad
 router.post('/ads', auth, role(['admin']), async (req, res) => {
   try {

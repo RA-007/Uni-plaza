@@ -22,6 +22,8 @@ export default function StudentDashboard() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [likedAds, setLikedAds] = useState([]);
+  const [interestedAds, setInterestedAds] = useState([]);
 
   // Use environment variable or fallback URL
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
@@ -87,7 +89,8 @@ export default function StudentDashboard() {
           (typeof ad.evntAdImage[0] === 'string' ? ad.evntAdImage[0] : 
            typeof ad.evntAdImage[0] === 'object' ? (ad.evntAdImage[0].filePath || ad.evntAdImage[0].url || ad.evntAdImage[0].fileName) : null) : null,
         date: ad.evntAdDate,
-        time: ad.evntAdTime
+        time: ad.evntAdTime,
+        source: 'club'
       }));
       const products = productRes.data.map(ad => ({ 
         ...ad, 
@@ -99,7 +102,10 @@ export default function StudentDashboard() {
         contact: ad.contactNumber ? ad.contactNumber.join(', ') : '',
         image: ad.prodAdImage && ad.prodAdImage.length > 0 ? 
           (typeof ad.prodAdImage[0] === 'string' ? ad.prodAdImage[0] : 
-           typeof ad.prodAdImage[0] === 'object' ? (ad.prodAdImage[0].filePath || ad.prodAdImage[0].url || ad.prodAdImage[0].fileName) : null) : null
+           typeof ad.prodAdImage[0] === 'object' ? (ad.prodAdImage[0].filePath || ad.prodAdImage[0].url || ad.prodAdImage[0].fileName) : null) : null,
+        date: null,
+        time: null,
+        source: 'club'
       }));
       const others = otherRes.data.map(ad => ({ 
         ...ad, 
@@ -107,31 +113,37 @@ export default function StudentDashboard() {
         title: ad.otherAdTitle,
         description: ad.otherAdDescription,
         price: null,
-        location: ad.otherAdLocation,
+        location: null,
         contact: ad.contactNumber ? ad.contactNumber.join(', ') : '',
         image: ad.otherAdImage && ad.otherAdImage.length > 0 ? 
           (typeof ad.otherAdImage[0] === 'string' ? ad.otherAdImage[0] : 
            typeof ad.otherAdImage[0] === 'object' ? (ad.otherAdImage[0].filePath || ad.otherAdImage[0].url || ad.otherAdImage[0].fileName) : null) : null,
-        date: ad.otherAdDate
+        date: null,
+        time: null,
+        source: 'club'
       }));
 
-      // Merge and sort by createdAt
-      const allAds = [...events, ...products, ...others].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-
+      const allAds = [...events, ...products, ...others];
       setAds(allAds);
       setFilteredAds(allAds);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching ads:', err);
+    } catch (error) {
+      console.error('Error fetching ads:', error);
       setError('Failed to load ads');
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAds();
+    const savedLikedAds = localStorage.getItem('likedAds');
+    const savedInterestedAds = localStorage.getItem('interestedAds');
+    if (savedLikedAds) {
+      setLikedAds(JSON.parse(savedLikedAds));
+    }
+    if (savedInterestedAds) {
+      setInterestedAds(JSON.parse(savedInterestedAds));
+    }
   }, []);
 
   // Filter by type and search
@@ -169,6 +181,34 @@ export default function StudentDashboard() {
     
     // Default to club-ads subdirectory
     return `http://localhost:5000/uploads/club-ads/${imagePath}`;
+  };
+
+  const handleLike = (ad) => {
+    setLikedAds(prev => {
+      const isLiked = prev.some(likedAd => likedAd._id === ad._id);
+      let updatedLikedAds;
+      if (isLiked) {
+        updatedLikedAds = prev.filter(likedAd => likedAd._id !== ad._id);
+      } else {
+        updatedLikedAds = [...prev, ad];
+      }
+      localStorage.setItem('likedAds', JSON.stringify(updatedLikedAds));
+      return updatedLikedAds;
+    });
+  };
+
+  const handleInterested = (ad) => {
+    setInterestedAds(prev => {
+      const isInterested = prev.some(interestedAd => interestedAd._id === ad._id);
+      let updatedInterestedAds;
+      if (isInterested) {
+        updatedInterestedAds = prev.filter(interestedAd => interestedAd._id !== ad._id);
+      } else {
+        updatedInterestedAds = [...prev, ad];
+      }
+      localStorage.setItem('interestedAds', JSON.stringify(updatedInterestedAds));
+      return updatedInterestedAds;
+    });
   };
 
   if (loading) return (
@@ -253,7 +293,7 @@ export default function StudentDashboard() {
               gap: '8px'
             }}
           >
-            ❤️ Liked Ads
+            ❤️ Liked Ads ({likedAds.length})
           </button>
           <button
             onClick={() => navigate('/interested-ads')}
@@ -270,7 +310,7 @@ export default function StudentDashboard() {
               gap: '8px'
             }}
           >
-            🔖 Interested Ads
+            🔖 Interested Ads ({interestedAds.length})
           </button>
           <button
             onClick={fetchAds}
@@ -456,8 +496,53 @@ export default function StudentDashboard() {
               
               <div style={{ 
                 marginTop: '15px',
-                textAlign: 'center'
+                textAlign: 'center',
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'center'
               }}>
+                <button
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: likedAds.some(likedAd => likedAd._id === ad._id) ? '#d32f2f' : '#f5f5f5',
+                    color: likedAds.some(likedAd => likedAd._id === ad._id) ? 'white' : '#666',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLike(ad);
+                  }}
+                >
+                  {likedAds.some(likedAd => likedAd._id === ad._id) ? <FaHeart /> : <FaRegHeart />}
+                  Like
+                </button>
+                <button
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: interestedAds.some(interestedAd => interestedAd._id === ad._id) ? '#388e3c' : '#f5f5f5',
+                    color: interestedAds.some(interestedAd => interestedAd._id === ad._id) ? 'white' : '#666',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleInterested(ad);
+                  }}
+                >
+                  {interestedAds.some(interestedAd => interestedAd._id === ad._id) ? <FaBookmark /> : <FaRegBookmark />}
+                  Interested
+                </button>
                 <button
                   style={{
                     padding: '8px 16px',

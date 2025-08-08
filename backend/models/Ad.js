@@ -5,11 +5,10 @@ const adSchema = new mongoose.Schema({
   description: String,
   type: String,
   status: {
-  type: String,
-  enum: ['pending', 'active', 'rejected'],
-  default: 'pending'
-},
-
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'approved'
+  },
   createdBy: mongoose.Schema.Types.ObjectId,
 }, { timestamps: true });
 

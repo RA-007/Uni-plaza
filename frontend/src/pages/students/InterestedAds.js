@@ -1,87 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { FaHeart, FaRegHeart, FaShare, FaBookmark, FaRegBookmark, FaArrowLeft } from 'react-icons/fa';
 
 const InterestedAds = () => {
   const [interestedAds, setInterestedAds] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
-
   useEffect(() => {
-    fetchInterestedAds();
+    // Get interested ads from localStorage
+    const storedInterestedAds = localStorage.getItem('interestedAds');
+    if (storedInterestedAds) {
+      setInterestedAds(JSON.parse(storedInterestedAds));
+    }
   }, []);
 
-  const fetchInterestedAds = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setError('Please login to view interested ads');
-        setLoading(false);
-        return;
-      }
-
-      const response = await axios.get(`${API_BASE_URL}/student/ads/interested`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setInterestedAds(response.data);
-    } catch (err) {
-      console.error('Error fetching interested ads:', err);
-      setError('Failed to load interested ads');
-    } finally {
-      setLoading(false);
-    }
+  const handleLike = (ad) => {
+    // Toggle like status
+    const updatedAd = { ...ad, isLiked: !ad.isLiked };
+    const updatedInterestedAds = interestedAds.map(interestedAd => 
+      interestedAd._id === ad._id ? updatedAd : interestedAd
+    );
+    setInterestedAds(updatedInterestedAds);
+    localStorage.setItem('interestedAds', JSON.stringify(updatedInterestedAds));
   };
 
-  const handleLike = async (adId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/student/ads/${adId}/like`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      // Update the ad in the list
-      setInterestedAds(prevAds => 
-        prevAds.map(ad => 
-          ad._id === adId 
-            ? { ...ad, likes: ad.likes.includes(JSON.parse(localStorage.getItem('user'))._id) 
-                ? ad.likes.filter(id => id !== JSON.parse(localStorage.getItem('user'))._id)
-                : [...ad.likes, JSON.parse(localStorage.getItem('user'))._id]
-              }
-            : ad
-        )
-      );
-    } catch (err) {
-      console.error('Error updating like:', err);
-    }
-  };
-
-  const handleInterest = async (adId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/student/ads/${adId}/interest`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      // Remove the ad from interested ads list
-      setInterestedAds(prevAds => prevAds.filter(ad => ad._id !== adId));
-    } catch (err) {
-      console.error('Error updating interest:', err);
-    }
+  const handleInterest = (ad) => {
+    const updatedInterestedAds = interestedAds.filter(interestedAd => interestedAd._id !== ad._id);
+    setInterestedAds(updatedInterestedAds);
+    localStorage.setItem('interestedAds', JSON.stringify(updatedInterestedAds));
   };
 
   const handleShare = (ad) => {
-    const shareUrl = `${window.location.origin}/ad/${ad.adType}/${ad._id}`;
+    const shareUrl = `${window.location.origin}/ad/${ad.type}/${ad._id}`;
     if (navigator.share) {
       navigator.share({
-        title: ad.adData.evntAdTitle || ad.adData.prodAdName || ad.adData.otherAdTitle,
-        text: ad.adData.evntAdDescription || ad.adData.prodAdDescription || ad.adData.otherAdDescription,
+        title: ad.title,
+        text: ad.description,
         url: shareUrl,
       }).catch(err => console.log('Error sharing:', err));
     } else {
@@ -91,16 +47,15 @@ const InterestedAds = () => {
   };
 
   const getAdTitle = (ad) => {
-    return ad.adData.evntAdTitle || ad.adData.prodAdName || ad.adData.otherAdTitle || 'Untitled Ad';
+    return ad.title || 'Untitled Ad';
   };
 
   const getAdDescription = (ad) => {
-    return ad.adData.evntAdDescription || ad.adData.prodAdDescription || ad.adData.otherAdDescription || 'No description available';
+    return ad.description || 'No description available';
   };
 
   const getAdImage = (ad) => {
-    const images = ad.adData.evntAdImage || ad.adData.prodAdImage || ad.adData.otherAdImage || [];
-    return images.length > 0 ? images[0] : null;
+    return ad.image || null;
   };
 
   const getImageUrl = (imageData) => {
@@ -114,21 +69,18 @@ const InterestedAds = () => {
   const constructImageUrl = (imagePath) => {
     if (!imagePath) return null;
     
-    // If it's already a full URL, return as is
     if (imagePath.startsWith('http')) return imagePath;
     
-    // If it contains a path with slashes, it might be a subdirectory
     if (imagePath.includes('/')) {
       return `http://localhost:5000/uploads/${imagePath}`;
     }
     
-    // Default to club-ads subdirectory
     return `http://localhost:5000/uploads/club-ads/${imagePath}`;
   };
 
   const isLiked = (ad) => {
-    const userId = JSON.parse(localStorage.getItem('user'))?._id;
-    return ad.likes?.includes(userId) || false;
+    const likedAds = JSON.parse(localStorage.getItem('likedAds') || '[]');
+    return likedAds.some(likedAd => likedAd._id === ad._id);
   };
 
   if (loading) {
@@ -264,7 +216,7 @@ const InterestedAds = () => {
             }}
             onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
             onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-            onClick={() => navigate(`/ad/${ad.adType}/${ad._id}`)}
+            onClick={() => navigate(`/ad/${ad.type}/${ad._id}`)}
             >
               {/* Image */}
               {getAdImage(ad) && (
@@ -299,10 +251,10 @@ const InterestedAds = () => {
                     borderRadius: '20px', 
                     fontSize: '12px',
                     fontWeight: 'bold',
-                    backgroundColor: ad.adType === 'event' ? '#e3f2fd' : ad.adType === 'product' ? '#f3e5f5' : '#e8f5e8',
-                    color: ad.adType === 'event' ? '#1976d2' : ad.adType === 'product' ? '#7b1fa2' : '#388e3c'
+                    backgroundColor: ad.type === 'event' ? '#e3f2fd' : ad.type === 'product' ? '#f3e5f5' : '#e8f5e8',
+                    color: ad.type === 'event' ? '#1976d2' : ad.type === 'product' ? '#7b1fa2' : '#388e3c'
                   }}>
-                    {ad.adType.toUpperCase()} AD
+                    {ad.type.toUpperCase()} AD
                   </span>
                   <span style={{ 
                     padding: '4px 8px', 
@@ -353,14 +305,14 @@ const InterestedAds = () => {
                 </p>
 
                 {/* Price */}
-                {ad.adData.prodAdPrice && (
+                {ad.price && (
                   <p style={{ 
                     fontSize: '20px', 
                     fontWeight: 'bold', 
                     color: '#2e7d32',
                     marginBottom: '15px'
                   }}>
-                    ₹{ad.adData.prodAdPrice}
+                    ₹{ad.price}
                   </p>
                 )}
 
@@ -376,11 +328,11 @@ const InterestedAds = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleLike(ad._id);
+                        handleLike(ad);
                       }}
                       style={{
                         padding: '8px 12px',
-                        backgroundColor: isLiked(ad) ? '#ffebee' : '#f5f5f5',
+                        backgroundColor: ad.isLiked ? '#ffebee' : '#f5f5f5',
                         border: '1px solid #ddd',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -388,17 +340,17 @@ const InterestedAds = () => {
                         alignItems: 'center',
                         gap: '6px',
                         fontSize: '14px',
-                        color: isLiked(ad) ? '#d32f2f' : '#333'
+                        color: ad.isLiked ? '#d32f2f' : '#333'
                       }}
                     >
-                      {isLiked(ad) ? <FaHeart color="#d32f2f" /> : <FaRegHeart />}
-                      {isLiked(ad) ? 'Liked' : 'Like'}
+                      {ad.isLiked ? <FaHeart color="#d32f2f" /> : <FaRegHeart />}
+                      {ad.isLiked ? 'Liked' : 'Like'}
                     </button>
                     
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleInterest(ad._id);
+                        handleInterest(ad);
                       }}
                       style={{
                         padding: '8px 12px',

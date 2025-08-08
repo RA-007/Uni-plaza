@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../axiosInstance';
 
 export default function Login() {
@@ -29,6 +30,9 @@ export default function Login() {
 
   return (
     <div style={styles.bg}>
+      <div style={styles.backLink}>
+        <Link to="/" style={styles.backButton}>← Back to Home</Link>
+      </div>
       <div style={styles.card}>
         <form onSubmit={handleSubmit} style={styles.form}>
           <h2 style={styles.title}>Login</h2>
@@ -107,6 +111,22 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  backLink: {
+    position: 'absolute',
+    top: '20px',
+    left: '20px',
+    zIndex: 10,
+  },
+  backButton: {
+    background: 'none',
+    border: 'none',
+    color: '#388e3c',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    padding: 0,
+    fontWeight: 'bold',
   },
   card: {
     background: '#fff',

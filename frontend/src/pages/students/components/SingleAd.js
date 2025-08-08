@@ -113,27 +113,36 @@ const SingleAd = () => {
 
   const checkUserInteraction = () => {
     try {
-      const userId = JSON.parse(localStorage.getItem('user'))?._id;
-      if (userId && ad) {
-        setIsLiked(ad.likes?.includes(userId) || false);
-        setIsInterested(ad.interests?.includes(userId) || false);
-      }
+      // Check liked ads from localStorage
+      const likedAds = JSON.parse(localStorage.getItem('likedAds') || '[]');
+      const isLikedAd = likedAds.some(likedAd => likedAd._id === adId);
+      setIsLiked(isLikedAd);
+      
+      // Check interested ads from localStorage
+      const interestedAds = JSON.parse(localStorage.getItem('interestedAds') || '[]');
+      const isInterestedAd = interestedAds.some(interestedAd => interestedAd._id === adId);
+      setIsInterested(isInterestedAd);
     } catch (err) {
       console.error('Error checking interactions:', err);
     }
   };
 
-  const handleLike = async () => {
+  const handleLike = () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login to like ads');
-        return;
+      // Get current liked ads from localStorage
+      const likedAds = JSON.parse(localStorage.getItem('likedAds') || '[]');
+      const isCurrentlyLiked = likedAds.some(likedAd => likedAd._id === adId);
+      
+      let updatedLikedAds;
+      if (isCurrentlyLiked) {
+        // Remove from liked ads
+        updatedLikedAds = likedAds.filter(likedAd => likedAd._id !== adId);
+      } else {
+        // Add to liked ads
+        updatedLikedAds = [...likedAds, ad];
       }
       
-      await axios.post(`${API_BASE_URL}/student/ads/${adId}/like`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      localStorage.setItem('likedAds', JSON.stringify(updatedLikedAds));
       setIsLiked(!isLiked);
     } catch (err) {
       console.error('Error updating like:', err);
@@ -141,17 +150,22 @@ const SingleAd = () => {
     }
   };
 
-  const handleInterest = async () => {
+  const handleInterest = () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login to mark interest');
-        return;
+      // Get current interested ads from localStorage
+      const interestedAds = JSON.parse(localStorage.getItem('interestedAds') || '[]');
+      const isCurrentlyInterested = interestedAds.some(interestedAd => interestedAd._id === adId);
+      
+      let updatedInterestedAds;
+      if (isCurrentlyInterested) {
+        // Remove from interested ads
+        updatedInterestedAds = interestedAds.filter(interestedAd => interestedAd._id !== adId);
+      } else {
+        // Add to interested ads
+        updatedInterestedAds = [...interestedAds, ad];
       }
       
-      await axios.post(`${API_BASE_URL}/student/ads/${adId}/interest`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      localStorage.setItem('interestedAds', JSON.stringify(updatedInterestedAds));
       setIsInterested(!isInterested);
     } catch (err) {
       console.error('Error updating interest:', err);

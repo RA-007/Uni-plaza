@@ -18,10 +18,16 @@ import EnterOtp from './pages/EnterOtp';
 import ForgotPassword from './pages/ForgotPassword';
 
 import Profile from './pages/Profile';
+import Home from './pages/Home';
 
 
 function Navigation() {
   const location = useLocation();
+  
+  // Don't show navigation on Home page
+  if (location.pathname === '/') {
+    return null;
+  }
   
   const isActive = (path) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -64,8 +70,9 @@ function App() {
       <Router>
         <Navigation />
         <Routes>
+          {/* Home Page Route - First page */}
+          <Route path="/" element={<Home />} />
           {/* Existing Routes */}
-          <Route path="/" element={<AdminDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/student-dashboard" element={<StudentDashboard />} />

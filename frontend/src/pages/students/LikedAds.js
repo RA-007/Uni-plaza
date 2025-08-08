@@ -1,87 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { FaHeart, FaRegHeart, FaShare, FaBookmark, FaRegBookmark, FaArrowLeft } from 'react-icons/fa';
 
 const LikedAds = () => {
   const [likedAds, setLikedAds] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
-
   useEffect(() => {
-    fetchLikedAds();
+    // Get liked ads from localStorage
+    const storedLikedAds = localStorage.getItem('likedAds');
+    if (storedLikedAds) {
+      setLikedAds(JSON.parse(storedLikedAds));
+    }
   }, []);
 
-  const fetchLikedAds = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setError('Please login to view liked ads');
-        setLoading(false);
-        return;
-      }
-
-      const response = await axios.get(`${API_BASE_URL}/student/ads/liked`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setLikedAds(response.data);
-    } catch (err) {
-      console.error('Error fetching liked ads:', err);
-      setError('Failed to load liked ads');
-    } finally {
-      setLoading(false);
-    }
+  const handleLike = (ad) => {
+    const updatedLikedAds = likedAds.filter(likedAd => likedAd._id !== ad._id);
+    setLikedAds(updatedLikedAds);
+    localStorage.setItem('likedAds', JSON.stringify(updatedLikedAds));
   };
 
-  const handleLike = async (adId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/student/ads/${adId}/like`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      // Remove the ad from liked ads list
-      setLikedAds(prevAds => prevAds.filter(ad => ad._id !== adId));
-    } catch (err) {
-      console.error('Error updating like:', err);
-    }
-  };
-
-  const handleInterest = async (adId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/student/ads/${adId}/interest`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      // Update the ad in the list
-      setLikedAds(prevAds => 
-        prevAds.map(ad => 
-          ad._id === adId 
-            ? { ...ad, interests: ad.interests.includes(JSON.parse(localStorage.getItem('user'))._id) 
-                ? ad.interests.filter(id => id !== JSON.parse(localStorage.getItem('user'))._id)
-                : [...ad.interests, JSON.parse(localStorage.getItem('user'))._id]
-              }
-            : ad
-        )
-      );
-    } catch (err) {
-      console.error('Error updating interest:', err);
-    }
+  const handleInterest = (ad) => {
+    // Toggle interest status
+    const updatedAd = { ...ad, isInterested: !ad.isInterested };
+    const updatedLikedAds = likedAds.map(likedAd => 
+      likedAd._id === ad._id ? updatedAd : likedAd
+    );
+    setLikedAds(updatedLikedAds);
+    localStorage.setItem('likedAds', JSON.stringify(updatedLikedAds));
   };
 
   const handleShare = (ad) => {
-    const shareUrl = `${window.location.origin}/ad/${ad.adType}/${ad._id}`;
+    const shareUrl = `${window.location.origin}/ad/${ad.type}/${ad._id}`;
     if (navigator.share) {
       navigator.share({
-        title: ad.adData.evntAdTitle || ad.adData.prodAdName || ad.adData.otherAdTitle,
-        text: ad.adData.evntAdDescription || ad.adData.prodAdDescription || ad.adData.otherAdDescription,
+        title: ad.title,
+        text: ad.description,
         url: shareUrl,
       }).catch(err => console.log('Error sharing:', err));
     } else {
@@ -91,16 +47,15 @@ const LikedAds = () => {
   };
 
   const getAdTitle = (ad) => {
-    return ad.adData.evntAdTitle || ad.adData.prodAdName || ad.adData.otherAdTitle || 'Untitled Ad';
+    return ad.title || 'Untitled Ad';
   };
 
   const getAdDescription = (ad) => {
-    return ad.adData.evntAdDescription || ad.adData.prodAdDescription || ad.adData.otherAdDescription || 'No description available';
+    return ad.description || 'No description available';
   };
 
   const getAdImage = (ad) => {
-    const images = ad.adData.evntAdImage || ad.adData.prodAdImage || ad.adData.otherAdImage || [];
-    return images.length > 0 ? images[0] : null;
+    return ad.image || null;
   };
 
   const getImageUrl = (imageData) => {
@@ -127,8 +82,8 @@ const LikedAds = () => {
   };
 
   const isInterested = (ad) => {
-    const userId = JSON.parse(localStorage.getItem('user'))?._id;
-    return ad.interests?.includes(userId) || false;
+    const interestedAds = JSON.parse(localStorage.getItem('interestedAds') || '[]');
+    return interestedAds.some(interestedAd => interestedAd._id === ad._id);
   };
 
   if (loading) {
@@ -264,7 +219,7 @@ const LikedAds = () => {
             }}
             onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
             onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-            onClick={() => navigate(`/ad/${ad.adType}/${ad._id}`)}
+            onClick={() => navigate(`/ad/${ad.type}/${ad._id}`)}
             >
               {/* Image */}
               {getAdImage(ad) && (
@@ -299,10 +254,10 @@ const LikedAds = () => {
                     borderRadius: '20px', 
                     fontSize: '12px',
                     fontWeight: 'bold',
-                    backgroundColor: ad.adType === 'event' ? '#e3f2fd' : ad.adType === 'product' ? '#f3e5f5' : '#e8f5e8',
-                    color: ad.adType === 'event' ? '#1976d2' : ad.adType === 'product' ? '#7b1fa2' : '#388e3c'
+                    backgroundColor: ad.type === 'event' ? '#e3f2fd' : ad.type === 'product' ? '#f3e5f5' : '#e8f5e8',
+                    color: ad.type === 'event' ? '#1976d2' : ad.type === 'product' ? '#7b1fa2' : '#388e3c'
                   }}>
-                    {ad.adType.toUpperCase()} AD
+                    {ad.type.toUpperCase()} AD
                   </span>
                   <span style={{ 
                     padding: '4px 8px', 
@@ -353,14 +308,14 @@ const LikedAds = () => {
                 </p>
 
                 {/* Price */}
-                {ad.adData.prodAdPrice && (
+                {ad.price && (
                   <p style={{ 
                     fontSize: '20px', 
                     fontWeight: 'bold', 
                     color: '#2e7d32',
                     marginBottom: '15px'
                   }}>
-                    ₹{ad.adData.prodAdPrice}
+                    ₹{ad.price}
                   </p>
                 )}
 
@@ -376,7 +331,7 @@ const LikedAds = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleLike(ad._id);
+                        handleLike(ad);
                       }}
                       style={{
                         padding: '8px 12px',
@@ -397,7 +352,7 @@ const LikedAds = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleInterest(ad._id);
+                        handleInterest(ad);
                       }}
                       style={{
                         padding: '8px 12px',

@@ -1,0 +1,160 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('C:\Users\Narthanan\Desktop\UP\Uni-plaza\frontend\public\bg.jpg') center center/cover no-repeat, #fff7ed;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #ff9800;
+  color: #fff;
+}
+.logo-section {
+  display: flex;
+  align-items: center;
+}
+.home-logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 1rem;
+}
+.home-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff3e0;
+}
+.login-section {
+  display: flex;
+  align-items: center;
+}
+.login-link {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  gap: 0.5rem;
+}
+.login-icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+.slideshow-section {
+  margin: 2rem auto 1rem auto;
+  width: 80%;
+  max-width: 600px;
+}
+.slideshow {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 152, 0, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.slide-img {
+  width: 100%;
+  max-width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(255,152,0,0.15);
+  display: none;
+  transition: opacity 0.5s;
+}
+.slide-img.active {
+  display: block;
+  opacity: 1;
+}
+.slideshow-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff3e0;
+  border: 2px solid #ff9800;
+  opacity: 0.7;
+  transition: background 0.2s, opacity 0.2s;
+}
+.dot.active {
+  background: #ff9800;
+  opacity: 1;
+}
+.auth-section {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+.auth-btn {
+  padding: 0.7rem 2rem;
+  background: #ff9800;
+  color: #fff;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+  border: none;
+}
+.auth-btn:hover {
+  background: #e65100;
+}
+.details-section {
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 800px;
+  padding: 0 1rem;
+}
+.details-section h2 {
+  margin-bottom: 1rem;
+  color: #ff9800;
+}
+.details-section p {
+  color: #444;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.feature {
+  background: #fff3e0;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(255,152,0,0.08);
+  text-align: center;
+}
+.feature h3 {
+  color: #ff9800;
+  margin-bottom: 0.5rem;
+}
+.feature p {
+  color: #666;
+  font-size: 0.9rem;
+}
+.home-footer {
+  margin-top: auto;
+  padding: 1rem 0;
+  background: #ff9800;
+  color: #fff;
+  text-align: center;
+  font-size: 1rem;
+}
